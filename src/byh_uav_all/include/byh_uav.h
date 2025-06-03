@@ -194,6 +194,7 @@ using namespace std;
 	{
 		double pulse_gps_time;
 		double pulse_mcu_time;
+		double pps_time;
 	};
 
 	// FPGA时间数据包
@@ -329,6 +330,7 @@ using namespace std;
 		
 		uint8_t pulse_gps_time[8];					// GPS时间信息（nus）
 		uint8_t pulse_mcu_time[8];					// MCU时间信息（nus）
+		uint8_t pps_time[8];						// 伪同步时间信息（nus）
 		
 		uint8_t	crc_calib; 							// 校验码
 		uint8_t	frame_tail; 						// 帧尾

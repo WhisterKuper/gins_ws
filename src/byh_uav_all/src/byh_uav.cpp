@@ -1329,6 +1329,16 @@ bool robot::Get_Sensor_Data( uint8_t sensor_data )
                         M_DOUBLE.B8[1] = data_camera->pulse_mcu_time[6];
                         M_DOUBLE.B8[0] = data_camera->pulse_mcu_time[7];
                         Receive_Data.camera.pulse_mcu_time = M_DOUBLE.B64;
+
+                        M_DOUBLE.B8[7] = data_camera->pps_time[0];
+                        M_DOUBLE.B8[6] = data_camera->pps_time[1];
+                        M_DOUBLE.B8[5] = data_camera->pps_time[2];
+                        M_DOUBLE.B8[4] = data_camera->pps_time[3];
+                        M_DOUBLE.B8[3] = data_camera->pps_time[4];
+                        M_DOUBLE.B8[2] = data_camera->pps_time[5];
+                        M_DOUBLE.B8[1] = data_camera->pps_time[6];
+                        M_DOUBLE.B8[0] = data_camera->pps_time[7];
+                        Receive_Data.camera.pps_time = M_DOUBLE.B64;
                         
                         if( data_camera->name == NAME_MCU )
                         {
@@ -1358,6 +1368,7 @@ bool robot::Get_Sensor_Data( uint8_t sensor_data )
                             MCU_Sync.count = Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296;
                             MCU_Sync.pulse_gps_time = Receive_Data.camera.pulse_gps_time;
                             MCU_Sync.pulse_mcu_time = Receive_Data.camera.pulse_mcu_time;
+                            MCU_Sync.pulse_fpga_time = Receive_Data.camera.pps_time;
                             MCU_publisher.publish(MCU_Sync);
                         }
                     }
