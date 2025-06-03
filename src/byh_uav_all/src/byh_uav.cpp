@@ -11,6 +11,7 @@ byh_uav::uav_barometer BMP581;
 byh_uav::uav_barometer SPL06;
 byh_uav::uav_gps ZEDF9P;
 byh_uav::uav_frequence Trigger1;
+byh_uav::uav_frequence Trigger2;
 byh_uav::uav_command Command;
 byh_uav::uav_fpga_time FPGA_Time;
 
@@ -967,6 +968,37 @@ bool robot::Get_Sensor_Data( uint8_t sensor_data )
                             Trigger1.pulse_mcu_time = Receive_Data.camera.pulse_mcu_time;
                             Trigger1_publisher.publish(Trigger1);
                         }
+                        // Trigger2
+                        else if( data_camera->name == NAME_Trigger2 )
+                        {
+                            // 收到以前的数据
+                            if( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 <= (long int)Trigger2.count && Trigger2.count !=0 )
+                            {
+                                return false;
+                            }
+
+                            if( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 != (long int)Trigger2.count + 1 && Trigger2.count !=0 )
+                            {
+                                // 错误过多
+                                if( (IN_RANGE( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296, (long int)Trigger2.count, MAX_LOST_COUNT )) != true )
+                                {
+                                    // return false;
+                                }
+                                if(first == false)
+                                    ROS_WARN("[Lost_Count] Trigger2: %ld, %ld", Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 - Trigger2.count - 1, Trigger2.count);
+
+                                if(first == true)
+                                    first = false;
+                            }
+                            Trigger2.name = "Trigger2";
+                            Trigger2.header.stamp = ros::Time::now(); 
+                            Trigger2.header.frame_id = frame_id; 
+                            Trigger2.number = data_camera->number;
+                            Trigger2.count = Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296;
+                            Trigger2.pulse_gps_time = Receive_Data.camera.pulse_gps_time;
+                            Trigger2.pulse_mcu_time = Receive_Data.camera.pulse_mcu_time;
+                            Trigger2_publisher.publish(Trigger2);
+                        }
                     }
 
                     // 气压计数据包
@@ -1537,7 +1569,8 @@ robot::robot():Power_voltage(0)
     ZEDF9P_publisher = private_nh.advertise<byh_uav::uav_gps>("byh_uav/ZEDF9P", 20);
 
     // 创建触发频率发布者
-    Trigger1_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Trigger", 20);
+    Trigger1_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Trigger1", 20);
+    Trigger2_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Trigger2", 20);
     
     // Trigger订阅回调函数设置
     trigger_subscriber = private_nh.subscribe("byh_uav/Frequence", 10, &robot::Cmd_Frequence_Callback, this); 

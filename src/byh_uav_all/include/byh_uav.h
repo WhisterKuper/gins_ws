@@ -131,6 +131,7 @@ using namespace std;
 	#define NAME_OAK 				0X11
 	#define NAME_ADIS16465 			0X12
 	#define NAME_BMP581 			0X13
+	#define NAME_Trigger2 			0X14
 	
 	// 命令名称
 	#define NAME_ACQUSITION 		0X01
@@ -600,6 +601,7 @@ class robot
 
         // 相机触发频率话题发布者
 		ros::Publisher Trigger1_publisher; 
+		ros::Publisher Trigger2_publisher; 
 
         // 命令话题发布者
 		ros::Publisher Command_publisher;
