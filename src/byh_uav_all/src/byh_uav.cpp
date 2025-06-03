@@ -10,7 +10,7 @@ byh_uav::uav_magnet AK8975;
 byh_uav::uav_barometer BMP581;
 byh_uav::uav_barometer SPL06;
 byh_uav::uav_gps ZEDF9P;
-byh_uav::uav_frequence D435i;
+byh_uav::uav_frequence Trigger1;
 byh_uav::uav_command Command;
 byh_uav::uav_fpga_time FPGA_Time;
 
@@ -936,36 +936,36 @@ bool robot::Get_Sensor_Data( uint8_t sensor_data )
                         M_DOUBLE.B8[0] = data_camera->pulse_mcu_time[7];
                         Receive_Data.camera.pulse_mcu_time = M_DOUBLE.B64;
 
-                        // D435i
-                        if( data_camera->name == NAME_D435I )
+                        // Trigger1
+                        if( data_camera->name == NAME_Trigger1 )
                         {
                             // 收到以前的数据
-                            if( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 <= (long int)D435i.count && D435i.count !=0 )
+                            if( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 <= (long int)Trigger1.count && Trigger1.count !=0 )
                             {
                                 return false;
                             }
 
-                            if( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 != (long int)D435i.count + 1 && D435i.count !=0 )
+                            if( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 != (long int)Trigger1.count + 1 && Trigger1.count !=0 )
                             {
                                 // 错误过多
-                                if( (IN_RANGE( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296, (long int)D435i.count, MAX_LOST_COUNT )) != true )
+                                if( (IN_RANGE( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296, (long int)Trigger1.count, MAX_LOST_COUNT )) != true )
                                 {
                                     // return false;
                                 }
                                 if(first == false)
-                                    ROS_WARN("[Lost_Count] D435i: %ld, %ld", Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 - D435i.count - 1, D435i.count);
+                                    ROS_WARN("[Lost_Count] Trigger1: %ld, %ld", Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 - Trigger1.count - 1, Trigger1.count);
 
                                 if(first == true)
                                     first = false;
                             }
-                            D435i.name = "D435i";
-                            D435i.header.stamp = ros::Time::now(); 
-                            D435i.header.frame_id = frame_id; 
-                            D435i.number = data_camera->number;
-                            D435i.count = Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296;
-                            D435i.pulse_gps_time = Receive_Data.camera.pulse_gps_time;
-                            D435i.pulse_mcu_time = Receive_Data.camera.pulse_mcu_time;
-                            D435i_publisher.publish(D435i);
+                            Trigger1.name = "Trigger1";
+                            Trigger1.header.stamp = ros::Time::now(); 
+                            Trigger1.header.frame_id = frame_id; 
+                            Trigger1.number = data_camera->number;
+                            Trigger1.count = Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296;
+                            Trigger1.pulse_gps_time = Receive_Data.camera.pulse_gps_time;
+                            Trigger1.pulse_mcu_time = Receive_Data.camera.pulse_mcu_time;
+                            Trigger1_publisher.publish(Trigger1);
                         }
                     }
 
@@ -1219,20 +1219,20 @@ bool robot::Get_Sensor_Data( uint8_t sensor_data )
                         if( data_fpga->name == NAME_PPS_FPGA_TIME )
                         {
                             // 收到以前的数据
-                            if( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 <= (long int)D435i.count && D435i.count !=0 )
+                            if( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 <= (long int)FPGA_Time.count && FPGA_Time.count !=0 )
                             {
                                 return false;
                             }
 
-                            if( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 != (long int)D435i.count + 1 && D435i.count !=0 )
+                            if( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 != (long int)FPGA_Time.count + 1 && FPGA_Time.count !=0 )
                             {
                                 // 错误过多
-                                if( (IN_RANGE( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296, (long int)D435i.count, MAX_LOST_COUNT )) != true )
+                                if( (IN_RANGE( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296, (long int)FPGA_Time.count, MAX_LOST_COUNT )) != true )
                                 {
                                     // return false;
                                 }
                                 if(first == false)
-                                    ROS_WARN("[Lost_Count] FPGA: %ld, %ld", Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 - D435i.count - 1, D435i.count);
+                                    ROS_WARN("[Lost_Count] FPGA: %ld, %ld", Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 - FPGA_Time.count - 1, FPGA_Time.count);
 
                                 if(first == true)
                                     first = false;
@@ -1537,7 +1537,7 @@ robot::robot():Power_voltage(0)
     ZEDF9P_publisher = private_nh.advertise<byh_uav::uav_gps>("byh_uav/ZEDF9P", 20);
 
     // 创建触发频率发布者
-    D435i_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Trigger", 20);
+    Trigger1_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Trigger", 20);
     
     // Trigger订阅回调函数设置
     trigger_subscriber = private_nh.subscribe("byh_uav/Frequence", 10, &robot::Cmd_Frequence_Callback, this); 

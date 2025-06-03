@@ -127,7 +127,7 @@ using namespace std;
 	#define NAME_SPL06 				0X07
 	#define NAME_BMP581 			0X08
 	#define NAME_ZEDF9P 			0X09
-	#define NAME_D435I 				0X10
+	#define NAME_Trigger1 			0X10
 	#define NAME_OAK 				0X11
 	#define NAME_ADIS16465 			0X12
 	#define NAME_BMP581 			0X13
@@ -599,7 +599,7 @@ class robot
 		ros::Publisher ZEDF9P_publisher; 
 
         // 相机触发频率话题发布者
-		ros::Publisher D435i_publisher; 
+		ros::Publisher Trigger1_publisher; 
 
         // 命令话题发布者
 		ros::Publisher Command_publisher;
