@@ -116,6 +116,7 @@ using namespace std;
 	#define TYPE_GET_COMMAND	0X13
 	#define TYPE_REBOOT			0X14
 	#define TYPE_FPGA       	0X15
+	#define TYPE_MCU			0X16
 
 	// 名称
 	#define NAME_ADIS16470 			0X01
@@ -132,6 +133,7 @@ using namespace std;
 	#define NAME_ADIS16465 			0X12
 	#define NAME_BMP581 			0X13
 	#define NAME_Trigger2 			0X14
+	#define NAME_MCU				0X15
 	
 	// 命令名称
 	#define NAME_ACQUSITION 		0X01
@@ -608,6 +610,7 @@ class robot
 
         // FPGA数据话题发布者
 		ros::Publisher FPGA_publisher;  
+		ros::Publisher MCU_publisher;  
 
         // 相机触发频率话题订阅者  
 		ros::Subscriber trigger_subscriber;    

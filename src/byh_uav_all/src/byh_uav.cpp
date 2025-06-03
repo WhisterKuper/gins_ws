@@ -12,6 +12,7 @@ byh_uav::uav_barometer SPL06;
 byh_uav::uav_gps ZEDF9P;
 byh_uav::uav_frequence Trigger1;
 byh_uav::uav_frequence Trigger2;
+byh_uav::uav_frequence MCU_Sync;
 byh_uav::uav_command Command;
 byh_uav::uav_fpga_time FPGA_Time;
 
@@ -1293,7 +1294,73 @@ bool robot::Get_Sensor_Data( uint8_t sensor_data )
                         }
                     }
 
+                    // MCU伪同步时间数据包
+                    else if(Receive_Data.rx[16] == TYPE_MCU)
+                    {
+                        data_camera = (Camera_Sensor_Data*) Receive_Data.rx;
+                        // 序列号
+                        M_UINT32.B4[3] = data_camera->count1[0];
+                        M_UINT32.B4[2] = data_camera->count1[1];
+                        M_UINT32.B4[1] = data_camera->count1[2];
+                        M_UINT32.B4[0] = data_camera->count1[3];
+                        Receive_Data.sequence[0] = M_UINT32.U32;
+                        M_UINT32.B4[3] = data_camera->count2[0];
+                        M_UINT32.B4[2] = data_camera->count2[1];
+                        M_UINT32.B4[1] = data_camera->count2[2];
+                        M_UINT32.B4[0] = data_camera->count2[3];
+                        Receive_Data.sequence[1] = M_UINT32.U32;
 
+                        // 时间
+                        M_DOUBLE.B8[7] = data_camera->pulse_gps_time[0];
+                        M_DOUBLE.B8[6] = data_camera->pulse_gps_time[1];
+                        M_DOUBLE.B8[5] = data_camera->pulse_gps_time[2];
+                        M_DOUBLE.B8[4] = data_camera->pulse_gps_time[3];
+                        M_DOUBLE.B8[3] = data_camera->pulse_gps_time[4];
+                        M_DOUBLE.B8[2] = data_camera->pulse_gps_time[5];
+                        M_DOUBLE.B8[1] = data_camera->pulse_gps_time[6];
+                        M_DOUBLE.B8[0] = data_camera->pulse_gps_time[7];
+                        Receive_Data.camera.pulse_gps_time = M_DOUBLE.B64;
+                        M_DOUBLE.B8[7] = data_camera->pulse_mcu_time[0];
+                        M_DOUBLE.B8[6] = data_camera->pulse_mcu_time[1];
+                        M_DOUBLE.B8[5] = data_camera->pulse_mcu_time[2];
+                        M_DOUBLE.B8[4] = data_camera->pulse_mcu_time[3];
+                        M_DOUBLE.B8[3] = data_camera->pulse_mcu_time[4];
+                        M_DOUBLE.B8[2] = data_camera->pulse_mcu_time[5];
+                        M_DOUBLE.B8[1] = data_camera->pulse_mcu_time[6];
+                        M_DOUBLE.B8[0] = data_camera->pulse_mcu_time[7];
+                        Receive_Data.camera.pulse_mcu_time = M_DOUBLE.B64;
+                        
+                        if( data_camera->name == NAME_MCU )
+                        {
+                            // 收到以前的数据
+                            if( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 <= (long int)MCU_Sync.count && MCU_Sync.count !=0 )
+                            {
+                                return false;
+                            }
+
+                            if( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 != (long int)MCU_Sync.count + 1 && MCU_Sync.count !=0 )
+                            {
+                                // 错误过多
+                                if( (IN_RANGE( Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296, (long int)MCU_Sync.count, MAX_LOST_COUNT )) != true )
+                                {
+                                    // return false;
+                                }
+                                if(first == false)
+                                    ROS_WARN("[Lost_Count] MCU_Sync: %ld, %ld", Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296 - MCU_Sync.count - 1, MCU_Sync.count);
+
+                                if(first == true)
+                                    first = false;
+                            }
+                            MCU_Sync.name = "MCU_Sync";
+                            MCU_Sync.header.stamp = ros::Time::now(); 
+                            MCU_Sync.header.frame_id = frame_id; 
+                            MCU_Sync.number = data_camera->number;
+                            MCU_Sync.count = Receive_Data.sequence[0] + Receive_Data.sequence[1] * 4294967296;
+                            MCU_Sync.pulse_gps_time = Receive_Data.camera.pulse_gps_time;
+                            MCU_Sync.pulse_mcu_time = Receive_Data.camera.pulse_mcu_time;
+                            MCU_publisher.publish(MCU_Sync);
+                        }
+                    }
                     length = 0;
                     return true;
                 }
@@ -1571,6 +1638,7 @@ robot::robot():Power_voltage(0)
     // 创建触发频率发布者
     Trigger1_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Trigger1", 20);
     Trigger2_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Trigger2", 20);
+    MCU_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Sync_Time", 20);
     
     // Trigger订阅回调函数设置
     trigger_subscriber = private_nh.subscribe("byh_uav/Frequence", 10, &robot::Cmd_Frequence_Callback, this); 
