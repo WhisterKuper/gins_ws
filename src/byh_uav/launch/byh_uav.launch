@@ -14,9 +14,9 @@
   <!-- 以太网配置 -->
 
   <!-- 使用接口配置：1 为串口; 0 为以太网，默认为以太网-->
-  <arg name="use_way"                 default="1"/> 
+  <arg name="use_way"                 default="0"/> 
   <!-- 使用线程：true 为使用 -->
-  <arg name="use_thread"              default="false"/> 
+  <arg name="use_thread"              default="true"/> 
 
   <!-- 打开节点 byh_uav -->
   <node pkg="byh_uav_all" type="byh_uav_all" name="byh_uav_all" output="screen"/>

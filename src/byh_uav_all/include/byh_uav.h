@@ -126,7 +126,7 @@ using namespace std;
 	#define NAME_RM3100 			0X05
 	#define NAME_AK8975 			0X06
 	#define NAME_SPL06 				0X07
-	#define NAME_BMP581 			0X08
+	#define NAME_MS5611 			0X08
 	#define NAME_ZEDF9P 			0X09
 	#define NAME_Trigger1 			0X10
 	#define NAME_OAK 				0X11

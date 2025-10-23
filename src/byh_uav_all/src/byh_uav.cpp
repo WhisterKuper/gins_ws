@@ -1636,6 +1636,7 @@ robot::robot():Power_voltage(0)
 
     // 创建IMU话题发布者
     ICM42688_publisher = private_nh.advertise<byh_uav::uav_imu>("byh_uav/ICM42688", 20); 
+    ADIS16470_publisher = private_nh.advertise<byh_uav::uav_imu>("byh_uav/ADIS16470", 20); 
 
     // 创建磁力计话题发布者
     RM3100_publisher = private_nh.advertise<byh_uav::uav_magnet>("byh_uav/RM3100", 20); 
@@ -1647,8 +1648,7 @@ robot::robot():Power_voltage(0)
     ZEDF9P_publisher = private_nh.advertise<byh_uav::uav_gps>("byh_uav/ZEDF9P", 20);
 
     // 创建触发频率发布者
-    Trigger1_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Trigger1", 20);
-    Trigger2_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Trigger2", 20);
+    Trigger1_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Trigger", 20);
     MCU_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Sync_Time", 20);
     
     // Trigger订阅回调函数设置
