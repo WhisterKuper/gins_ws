@@ -132,8 +132,8 @@ void GPSPPS_Callback(const byh_uav::uav_pps::ConstPtr& msg)
     // 文件已经打开
     if ( ofs_gpspps.is_open() && (acqusition == true) ) 
     {
-        ofs_gpspps << (uint64_t)(msg->pulse_gps_time.sec * 10000000000) / 10000000000 << "."
-            << setw(9) << setfill('0') << right << (uint64_t)(msg->pulse_gps_time.nsec) << "\t"
+        ofs_gpspps << (uint64_t)(msg->pulse_mcu_gps_time.sec * 10000000000) / 10000000000 << "."
+            << setw(9) << setfill('0') << right << (uint64_t)(msg->pulse_mcu_gps_time.nsec) << "\t"
             << (uint64_t)(msg->pulse_sys_time.sec * 10000000000) / 10000000000 << "."
             << setw(9) << setfill('0') << right << (uint64_t)(msg->pulse_sys_time.nsec) << "\t" << "\n";
     }
