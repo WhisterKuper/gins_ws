@@ -3,8 +3,8 @@ sleep 1;
 source /opt/ros/noetic/setup.zsh
 
 sleep 1;
-sudo ifconfig eth1 192.168.1.50
-sudo ifconfig eth2 192.168.16.144
+sudo ifconfig eth0 192.168.1.50
+sudo ifconfig eth1 192.168.16.144
 sudo chmod 777 /dev/ttyTHS0
 sudo chmod 777 /dev/ttyACM0
 
@@ -14,6 +14,9 @@ sleep 1;
 gnome-terminal --tab --title="ptp同步" -- zsh -c "sudo ptp4l -m -S -l 6 -i eth0; exec zsh" && 
 # BYHUAV 开启
 gnome-terminal --tab --title="GINS" -- zsh -c "ulimit -c unlimited && echo core-%e-%p-%t | sudo tee /proc/sys/kernel/core_pattern && source ~/Ros/gins_ws/devel/setup.zsh && roslaunch byh_uav byh_uav.launch; exec zsh" && 
+sleep 1 &&
+# BYHUAV UBLOX开启
+gnome-terminal --tab --title="UBLOX" -- zsh -c "ulimit -c unlimited && echo core-%e-%p-%t | sudo tee /proc/sys/kernel/core_pattern && source ~/Ros/gins_ws/devel/setup.zsh && roslaunch byh_uav_ublox byh_uav.launch; exec zsh" && 
 sleep 1 &&
 # PPS同步 开启
 gnome-terminal --tab --title="PPS同步" -- zsh -c "sudo -u root zsh -c \" ulimit -c unlimited && echo core-%e-%p-%t | sudo tee /proc/sys/kernel/core_pattern && source /home/kuper/Ros/gins_ws/devel/setup.zsh  && rosrun byh_uav_pps byh_uav_pps /dev/pps1 \"; exec zsh" && 

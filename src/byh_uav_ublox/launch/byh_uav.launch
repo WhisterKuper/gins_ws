@@ -1,0 +1,13 @@
+<launch>
+  <!-- uart 配置 -->
+    <!-- USB -->
+    <arg name="uart_port_name"          default="/dev/ttyTHS0"/> 
+    <!-- 波特率 -->
+    <arg name="uart_baud_rate"          default="921600"/> 
+  <!-- uart 配置 -->
+
+  <!-- 打开节点 byh_uav -->
+  <node pkg="byh_uav_ublox" type="byh_uav_ublox" name="byh_uav_ublox" output="screen"/>
+    <param name="uart_port_name"       type="string"      value="$(arg uart_port_name)"/>  
+    <param name="uart_baud_rate"       type="int"         value="$(arg uart_baud_rate)"/>
+</launch>
