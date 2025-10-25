@@ -28,8 +28,8 @@
     <param name="use_way"             type="int"          value="$(arg use_way)"/>
  
   <!-- 打开节点 byh_uav_record -->
-  <!-- <arg name="direction"               default="/home/kuper/Ros/byh_uav_ws/src/byh_uav_record/data"/>  -->
+  <arg name="direction"               default="/home/kuper/Ros/gins_ws/src/byh_uav_record/data"/> 
 
-  <!-- <node pkg="byh_uav_record" type="byh_uav_record" name="byh_uav_record" output="screen"/> -->
-    <!-- <param name="direction"     type="string"      value="$(arg direction)"/>   -->
+  <node pkg="byh_uav_record" type="byh_uav_record" name="byh_uav_record" output="screen"/>
+    <param name="direction"     type="string"      value="$(arg direction)"/>  
 </launch>

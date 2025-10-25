@@ -6,7 +6,7 @@ ofstream ofs_icm42688;
 ofstream ofs_bmi088;
 ofstream ofs_rm3100;
 ofstream ofs_ak8975;
-ofstream ofs_ms5611;
+ofstream ofs_BMP581;
 ofstream ofs_zedf9p;
 ofstream ofs_gpspps;
 ofstream ofs_livox;
@@ -97,13 +97,13 @@ void AK8975_Callback(const byh_uav::uav_magnet::ConstPtr& msg)
     }
 }
 
-// MS5611 回调函数
-void MS5611_Callback(const byh_uav::uav_barometer::ConstPtr& msg)
+// BMP581 回调函数
+void BMP581_Callback(const byh_uav::uav_barometer::ConstPtr& msg)
 {
     // 文件已经打开
-    if ( ofs_ms5611.is_open() && (acqusition == true) ) 
+    if ( ofs_BMP581.is_open() && (acqusition == true) ) 
     {
-        ofs_ms5611 << (uint64_t)(msg->data_gps_time * 10000000000) / 10000000000 << "."
+        ofs_BMP581 << (uint64_t)(msg->data_gps_time * 10000000000) / 10000000000 << "."
             << setw(10) << setfill('0') << (uint64_t)(msg->data_gps_time * 10000000000) % 10000000000 << "\t"
             << fixed<<setprecision(10) << msg->height << "\t"<< "\n";
     }
@@ -188,21 +188,21 @@ void Command_Callback(const byh_uav::uav_command::ConstPtr& msg)
         data = str4.data();
         ofs_icm42688.open( data , ios::in | ios::out | ios::app );
 
-        str4 = str3 + string("/byhuav_imu_bmi088.txt");
-        data = str4.data();
-        ofs_bmi088.open( data , ios::in | ios::out | ios::app );
+        // str4 = str3 + string("/byhuav_imu_bmi088.txt");
+        // data = str4.data();
+        // ofs_bmi088.open( data , ios::in | ios::out | ios::app );
 
         str4 = str3 + string("/byhuav_magnet_rm3100.txt");
         data = str4.data();
         ofs_rm3100.open( data , ios::in | ios::out | ios::app );
 
-        str4 = str3 + string("/byhuav_magnet_ak8975.txt");
-        data = str4.data();
-        ofs_ak8975.open( data , ios::in | ios::out | ios::app );
+        // str4 = str3 + string("/byhuav_magnet_ak8975.txt");
+        // data = str4.data();
+        // ofs_ak8975.open( data , ios::in | ios::out | ios::app );
 
-        str4 = str3 + string("/byhuav_barometer_ms5611.txt");
+        str4 = str3 + string("/byhuav_barometer_bmp581.txt");
         data = str4.data();
-        ofs_ms5611.open( data , ios::in | ios::out | ios::app );
+        ofs_BMP581.open( data , ios::in | ios::out | ios::app );
 
         str4 = str3 + string("/byhuav_gps_zedf9p.txt");
         data = str4.data();
@@ -230,7 +230,7 @@ void Command_Callback(const byh_uav::uav_command::ConstPtr& msg)
         ofs_bmi088.close();
         ofs_rm3100.close();
         ofs_ak8975.close();
-        ofs_ms5611.close();
+        ofs_BMP581.close();
         ofs_zedf9p.close();
         ofs_gpspps.close();
         ofs_livox.close();
@@ -259,10 +259,10 @@ int main(int argc, char** argv)
     ros::Subscriber Command_sub = n.subscribe("/byh_uav/Command", 20, Command_Callback);
     ros::Subscriber ADIS16470_sub = n.subscribe("/byh_uav/ADIS16470", 20, ADIS16470_Callback);
     ros::Subscriber ICM42688_sub = n.subscribe("/byh_uav/ICM42688", 20, ICM42688_Callback);
-    ros::Subscriber BMI088_sub = n.subscribe("/byh_uav/BMI088", 20, BMI088_Callback);
+    // ros::Subscriber BMI088_sub = n.subscribe("/byh_uav/BMI088", 20, BMI088_Callback);
     ros::Subscriber RM3100_sub = n.subscribe("/byh_uav/RM3100", 20, RM3100_Callback);
     ros::Subscriber AK8975_sub = n.subscribe("/byh_uav/AK8975", 20, AK8975_Callback);
-    ros::Subscriber MS5611_sub = n.subscribe("/byh_uav/MS5611", 20, MS5611_Callback);
+    ros::Subscriber BMP581_sub = n.subscribe("/byh_uav/BMP581", 20, BMP581_Callback);
     ros::Subscriber ZEDF9P_sub = n.subscribe("/byh_uav/ZEDF9P", 20, ZEDF9P_Callback);
     ros::Subscriber GPSPPS_sub = n.subscribe("/byh_uav/pps_sys", 20, GPSPPS_Callback);
     ros::Subscriber LIVOX_sub = n.subscribe("/livox/imu", 20, LIVOX_Callback);

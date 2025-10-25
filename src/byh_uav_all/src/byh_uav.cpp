@@ -1650,6 +1650,9 @@ robot::robot():Power_voltage(0)
     // 创建触发频率发布者
     Trigger1_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Trigger", 20);
     MCU_publisher = private_nh.advertise<byh_uav::uav_frequence>("byh_uav/Sync_Time", 20);
+
+    // 创建命令发布者
+    Command_publisher = private_nh.advertise<byh_uav::uav_command>("/byh_uav/Command", 20);
     
     // Trigger订阅回调函数设置
     trigger_subscriber = private_nh.subscribe("byh_uav/Frequence", 10, &robot::Cmd_Frequence_Callback, this); 
